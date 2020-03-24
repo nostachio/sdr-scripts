@@ -1,4 +1,4 @@
-#!/bin/#!/usr/bin/env bash
+#!/usr/bin/env bash
 #check if pulseaudio is installed
 #check if nomachine is installed
 #detect sources and sinks
