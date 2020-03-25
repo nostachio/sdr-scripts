@@ -53,7 +53,7 @@ else
   echo "Creating sink ${SINK}"
   pactl load-module module-null-sink sink_name=${SINK}
 fi
-make that sink the default
+#make that sink the default
 echo "Making sink default"
 pacmd set-default-sink ${SINK}
 #mirror radio source to the sink
