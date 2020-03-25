@@ -22,7 +22,7 @@ then
 fi
 
 #check if NoMachine sources are present (if not, there is not a current NoMachine session and the scripts shouldn't change anything.) or exit with message
-pacmd list-sources | grep name: | grep 'nx_voice_out.monitor'
+pacmd list-sources | grep name: | grep 'nx_voice_out.monitor' >/dev/null
 if [ $? -ne 0 ]
 then
   echo "NoMachine sources not available in Pulseaudio.  This script should only be run while connected via NoMachine.  If you are connected via NoMachine, please check the audio settings and try again."
@@ -36,9 +36,11 @@ fi
 
 #detect sources and sinks
 RADIO_IN=$(pacmd list-sources | grep name: | grep input | tr -d '<>' | awk '{print $2}')
-RADIO_OUT=$(pacmd list-sources | grep name: | grep output | tr -d '<>' | awk '{print $2}')
+RADIO_OUT=$(pacmd list-sources | grep name: | grep usb | grep output | tr -d '<>' | awk '{print $2}')
 
 #create sinks and loopbacks
+# cleanup
+pacmd unload-module module-loopback
 #get sound from rig source
 echo "Setting default souce to radio source"
 pacmd set-default-source ${RADIO_IN}
