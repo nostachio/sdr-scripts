@@ -48,9 +48,9 @@ pacmd list-sinks |grep "name: <${SINK}>"
 if [ $? -eq 0 ]
 then
   echo "${SINK} sink already exists.  Skipping."
+else
+  pactl load-module module-null-sink sink_name=${SINK}
 fi
-  
-pactl load-module module-null-sink sink_name=${SINK}
 #make that sink the default
 echo "Making sink default"
 pacmd set-default-sink ${SINK}
