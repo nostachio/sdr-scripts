@@ -37,10 +37,12 @@ fi
 #detect sources and sinks
 RADIO_IN=$(pacmd list-sources | grep name: | grep input | tr -d '<>' | awk '{print $2}')
 RADIO_OUT=$(pacmd list-sources | grep name: | grep usb | grep output | tr -d '<>' | awk '{print $2}')
-
+NOMACHINE_IN=$(pacmd list-sources | grep name: | grep nx | grep monitor | tr -d '<>' | awk '{print $2}')
+NOMACHINE_OUT=$(pacmd list-sources | grep name: |grep nx | grep remapped | tr -d '<>' | awk '{print $2}')
 #create sinks and loopbacks
 # cleanup
 pacmd unload-module module-loopback
+pacmd unload-module module-null-sink
 #get sound from rig source
 echo "Setting default souce to radio source"
 pacmd set-default-source ${RADIO_IN}
@@ -54,11 +56,11 @@ else
   pactl load-module module-null-sink sink_name=${SINK}
 fi
 #make that sink the default
-echo "Making sink default"
-pacmd set-default-sink ${SINK}
+#echo "Making sink default"
+#pacmd set-default-sink ${SINK}
 #mirror radio source to the sink
 echo "Mirroring radio source to sink"
-pacmd load-module module-loopback source=${RADIO_IN} sink=${SINK}
+pacmd load-module module-loopback source=${RADIO_IN} sink=${NOMACHINE_OUT}
 #mirror nx (aka nomachine) server input to rig
 echo "Mirroring NX (aka NoMachine) source to sink"
-pactl load-module module-loopback source=nx_voice_out.monitor sink=${RADIO_OUT}
+pactl load-module module-loopback source=${NOMACHINE_IN} sink=${RADIO_OUT}
