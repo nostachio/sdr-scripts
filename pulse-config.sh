@@ -42,7 +42,7 @@ RADIO_OUT=$(pacmd list-sources | grep name: | grep output | tr -d '<>' | awk '{p
 #get sound from rig source
 echo "Setting default souce to radio source"
 pacmd set-default-source ${RADIO_IN}
-#create an empty sink if not already preset (otherwise pulseaudio gives a 53 error)
+#create an empty sink if not already present (if present pulseaudio gives a 53 error)
 echo "Creating sink ${SINK}"
 pacmd list-sinks |grep "name: <${SINK}>"
 if [ $? -eq 0 ]
