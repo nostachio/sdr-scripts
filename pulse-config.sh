@@ -60,7 +60,7 @@ fi
 #pacmd set-default-sink ${SINK}
 #mirror radio source to the sink
 echo "Mirroring radio source to sink"
-pacmd load-module module-loopback source=${RADIO_IN} sink=${NOMACHINE_OUT}
+pacmd load-module module-loopback source=${RADIO_IN} sink=${NOMACHINE_IN}
 #mirror nx (aka nomachine) server input to rig
 echo "Mirroring NX (aka NoMachine) source to sink"
-pactl load-module module-loopback source=${NOMACHINE_IN} sink=${RADIO_OUT}
+pactl load-module module-loopback source=${NOMACHINE_OUT} sink=${RADIO_OUT}
