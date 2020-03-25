@@ -40,21 +40,19 @@ RADIO_OUT=$(pacmd list-sources | grep name: | grep usb | grep output | tr -d '<>
 NOMACHINE_IN=$(pacmd list-sources | grep name: | grep nx | grep monitor | tr -d '<>' | awk '{print $2}')
 NOMACHINE_OUT=$(pacmd list-sources | grep name: |grep nx | grep remapped | tr -d '<>' | awk '{print $2}')
 #create sinks and loopbacks
-# cleanup
-pacmd unload-module module-loopback
-pacmd unload-module module-null-sink
+
 #get sound from rig source
 echo "Setting default souce to radio source"
 pacmd set-default-source ${RADIO_IN}
 #create an empty sink if not already present (if present pulseaudio gives a 53 error)
-echo "Creating sink ${SINK}"
-pacmd list-sinks |grep "name: <${SINK}>"
-if [ $? -eq 0 ]
-then
-  echo "${SINK} sink already exists.  Skipping."
-else
-  pactl load-module module-null-sink sink_name=${SINK}
-fi
+# echo "Creating sink ${SINK}"
+# pacmd list-sinks |grep "name: <${SINK}>"
+# if [ $? -eq 0 ]
+# then
+#   echo "${SINK} sink already exists.  Skipping."
+# else
+#   pactl load-module module-null-sink sink_name=${SINK}
+# fi
 #make that sink the default
 #echo "Making sink default"
 #pacmd set-default-sink ${SINK}
