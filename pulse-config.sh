@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #set variables
 #set sink name
-SINK="dummy"
+COMBINED_SINK="dummy"
 #set nomachine path (default is /usr/NX)
 NXPATH="/usr/NX"
 
@@ -35,30 +35,44 @@ then
 fi
 
 #detect sources and sinks
+#from pi
+PI_IN_SOURCE=$(pacmd list-sources | grep platform | tr -d '<>' | awk '{print $2}')
+# to pi
+PI_OUT_SINK=$(pacmd list-sinks | grep platform | tr -d '<>' | awk '{print $2}')
+# from rig
 RADIO_IN=$(pacmd list-sources | grep name: | grep input | tr -d '<>' | awk '{print $2}')
-RADIO_OUT=$(pacmd list-sources | grep name: | grep usb | grep output | tr -d '<>' | awk '{print $2}')
+# to rig
+RADIO_OUT_SINK=$(pacmd list-sinks | grep name: | grep usb | grep output | tr -d '<>' | awk '{print $2}')
+#from remote nomachine
 NOMACHINE_IN=$(pacmd list-sources | grep name: | grep nx | grep monitor | tr -d '<>' | awk '{print $2}')
-NOMACHINE_OUT=$(pacmd list-sources | grep name: |grep nx | grep remapped | tr -d '<>' | awk '{print $2}')
+#to remote nomachine
+NOMACHINE_OUT_SINK=$(pacmd list-sinks | grep name: |grep nx_voice_out | tr -d '<>' | awk '{print $2}')
 #create sinks and loopbacks
 
 #get sound from rig source
-echo "Setting default souce to radio source"
-pacmd set-default-source ${RADIO_IN}
+# echo "Setting default souce to radio source"
+# pacmd set-default-source ${COMBINED_SINK}
 #create an empty sink if not already present (if present pulseaudio gives a 53 error)
-pacmd list-sinks |grep "name: <${SINK}>"
+pacmd list-sinks |grep "name: <${COMBINED_SINK}>"
 if [ $? -eq 0 ]
 then
-  echo "${SINK} sink already exists.  Skipping."
+  echo "${COMBINED_SINK} sink already exists.  Skipping."
 else
-  echo "Creating sink ${SINK}"
-  pactl load-module module-null-sink sink_name=${SINK}
+  echo "Creating sink ${COMBINED_SINK}"
+  pactl load-module module-null-sink sink_name=${COMBINED_SINK}
 fi
 #make that sink the default
-echo "Making sink default"
-pacmd set-default-sink ${SINK}
+# echo "Making sink default"
+# pacmd set-default-sink ${SINK}
+#mirror pi output to remote nomachine
 #mirror radio source to the sink
+#mirror pi to remote NoMachine
+# Combine pi and radio into one sink
+pacmd load-module module-loopback source=${PI_IN_SOURCE} sink=${COMBINED_SINK}
 echo "Mirroring radio source to sink"
-pacmd load-module module-loopback source=${RADIO_IN} sink=${NOMACHINE_OUT}
+pacmd load-module module-loopback source=${RADIO_IN} sink=${COMBINED_SINK}
+#send combined sink to remote NoMachine
+pacmd load-module module-loopback source=${COMBINED_SINK}.monitor sink=${NOMACHINE_OUT_SINK}
 #mirror nx (aka nomachine) server input to rig
 echo "Mirroring NX (aka NoMachine) source to sink"
-pactl load-module module-loopback source=${NOMACHINE_IN} sink=${RADIO_OUT}
+pactl load-module module-loopback source=${NOMACHINE_IN} sink=${RADIO_OUT_SINK}
