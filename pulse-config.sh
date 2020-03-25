@@ -38,27 +38,27 @@ fi
 RADIO_IN=$(pacmd list-sources | grep name: | grep input | tr -d '<>' | awk '{print $2}')
 RADIO_OUT=$(pacmd list-sources | grep name: | grep usb | grep output | tr -d '<>' | awk '{print $2}')
 NOMACHINE_IN=$(pacmd list-sources | grep name: | grep nx | grep monitor | tr -d '<>' | awk '{print $2}')
-NOMACHINE_OUT=$(pacmd list-sources | grep name: |grep nx | grep remapped | tr -d '<>' | awk '{print $2}')
+# NOMACHINE_OUT=$(pacmd list-sources | grep name: |grep nx | grep remapped | tr -d '<>' | awk '{print $2}')
 #create sinks and loopbacks
 
 #get sound from rig source
 echo "Setting default souce to radio source"
 pacmd set-default-source ${RADIO_IN}
 #create an empty sink if not already present (if present pulseaudio gives a 53 error)
-# echo "Creating sink ${SINK}"
-# pacmd list-sinks |grep "name: <${SINK}>"
-# if [ $? -eq 0 ]
-# then
-#   echo "${SINK} sink already exists.  Skipping."
-# else
-#   pactl load-module module-null-sink sink_name=${SINK}
-# fi
-#make that sink the default
-#echo "Making sink default"
-#pacmd set-default-sink ${SINK}
+pacmd list-sinks |grep "name: <${SINK}>"
+if [ $? -eq 0 ]
+then
+  echo "${SINK} sink already exists.  Skipping."
+else
+  echo "Creating sink ${SINK}"
+  pactl load-module module-null-sink sink_name=${SINK}
+fi
+make that sink the default
+echo "Making sink default"
+pacmd set-default-sink ${SINK}
 #mirror radio source to the sink
 echo "Mirroring radio source to sink"
-pacmd load-module module-loopback source=${RADIO_IN} sink=${NOMACHINE_OUT}
+pacmd load-module module-loopback source=${RADIO_IN} sink=${SINK}
 #mirror nx (aka nomachine) server input to rig
 echo "Mirroring NX (aka NoMachine) source to sink"
 pactl load-module module-loopback source=${NOMACHINE_IN} sink=${RADIO_OUT}
