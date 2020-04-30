@@ -28,7 +28,7 @@ fi
 # may not have the option as an unprivileged user, so we're going to check if a non-local IP is connecting to something with nx in the name
 # list connected tcp ports and programs, find foreign ips that are nx-associated that are not from the local machine and count them
 # alternate methods could include allowing the specific nxserver --list command or something like that, but that seems complicated to rely on the user doing and still require a password prompt to ensure a first time setup, so let's keep it to functions that don't require elevated privileges.
-NON_LOCAL_NX_CONNECTIONS=$(netstat -tnp | grep "nxnode" | grep -v "Not all processes" | grep -v "not be shown" | awk '{print $5}' | grep -v 127.0.0.1 | grep -v '::1:' | wc -l)
+NON_LOCAL_NX_CONNECTIONS=$(netstat -tnp 2>/dev/null | grep "nxnode" | awk '{print $5}' | grep -v 127.0.0.1 | grep -v '::1:' | wc -l)
 if [ ${NON_LOCAL_NX_CONNECTIONS} -eq 0 ]
 then
   echo "There don't seem to be any NoMachine sessions.  This script should only be run while connected via NoMachine."
