@@ -125,3 +125,5 @@ do
   pacmd set-sink-input-volume ${SINK_INPUT} 65536
 done
 echo "Setup and config for using your radio over NoMachine is now complete."
+echo "Press enter to close this window."
+read
