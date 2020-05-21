@@ -100,13 +100,13 @@ echo "Mirroring remote NoMachine audio to radio."
 pacmd load-module module-loopback source=${NOMACHINE_IN} sink=${RADIO_OUT_SINK}
 echo "Done."
 echo "Setting volumes..."
-SINK_LIST=$(pacmd list-sinks | grep name: | tr -d '<>' | awk '{print $2}')
+SINK_LIST=$(pacmd list-sinks | grep index: | tr -d '<>' | awk '{print $2}')
 for SINK in ${SINK_LIST}
 do
   echo "pacmd set-sink-volume ${SINK} 100"
   pacmd set-sink-volume ${SINK} 100
 done
-SOURCE_LIST=$(pacmd list-sinks | grep name: | tr -d '<>' | awk '{print $2}')
+SOURCE_LIST=$(pacmd list-sinks | grep index: | tr -d '<>' | awk '{print $2}')
 for SOURCE in ${SOURCE_LIST}
 do
   echo "pacmd set-source-volume ${SOURCE} 100"
