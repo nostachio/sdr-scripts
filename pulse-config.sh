@@ -103,21 +103,25 @@ echo "Setting volumes..."
 SINK_LIST=$(pacmd list-sinks | grep name: | tr -d '<>' | awk '{print $2}')
 for SINK in ${SINK_LIST}
 do
+  echo "pacmd set-sink-volume ${SINK} 100"
   pacmd set-sink-volume ${SINK} 100
 done
 SOURCE_LIST=$(pacmd list-sinks | grep name: | tr -d '<>' | awk '{print $2}')
 for SOURCE in ${SOURCE_LIST}
 do
+  echo "pacmd set-source-volume ${SOURCE} 100"
   pacmd set-source-volume ${SOURCE} 100
 done
 SOURCE_OUTPUT_LIST=$(pacmd list-sinks | grep index: | tr -d '<>' | awk '{print $2}')
 for SOURCE_OUTPUT in ${SOURCE_OUTPUT_LIST}
 do
+  echo "pacmd set-source-output-volume ${SOURCE_OUTPUT} 100"
   pacmd set-source-output-volume ${SOURCE_OUTPUT} 100
 done
 SINK_INPUT_LIST=$(pacmd list-sinks | grep index: | tr -d '<>' | awk '{print $2}')
 for SINK_INPUT in ${SINK_INPUT_LIST}
 do
+  echo "pacmd set-sink-input-volume ${SINK_INPUT} 100"
   pacmd set-sink-input-volume ${SINK_INPUT} 100
 done
 echo "Setup and config for using your radio over NoMachine is now complete."
