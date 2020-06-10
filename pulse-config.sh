@@ -60,7 +60,7 @@ done
 #detect sources and sinks
 #from pi
 PI_IN_SOURCE=$(pacmd list-sources | grep platform | tr -d '<>' | awk '{print $2}')
-# to pi (unused, but may be handy at some point)
+# to pi (speakers)
 PI_OUT_SINK=$(pacmd list-sinks | grep platform | tr -d '<>' | awk '{print $2}')
 # from rig
 RADIO_IN=$(pacmd list-sources | grep name: | grep input | tr -d '<>' | awk '{print $2}')
@@ -87,12 +87,15 @@ fi
 echo "Sending system audio to combined sink."
 pacmd load-module module-loopback source=${PI_IN_SOURCE} sink=${COMBINED_SINK}
 echo "Done."
-echo "Sending radio audio input to combined sink."
+echo "Sending audio from radio to combined sink."
 pacmd load-module module-loopback source=${RADIO_IN} sink=${COMBINED_SINK}
 echo "Done."
-echo "Sending combined sink to Pi output."
-pacmd load-module module-loopback source=source=${COMBINED_SINK}.monitor sink=${PI_OUT_SINK}
+echo "Sending audio from radio to system sink (HDMI speakers)"
+pacmd load-module module-loopback source=${RADIO_IN} sink=${PI_OUT_SINK}
 echo "Done."
+# echo "Sending combined sink to Pi output."
+# pacmd load-module module-loopback source=${COMBINED_SINK}.monitor sink=${PI_OUT_SINK}
+# echo "Done."
 echo "Sending combined sink monitor to remote NoMachine."
 pacmd load-module module-loopback source=${COMBINED_SINK}.monitor sink=${NOMACHINE_OUT_SINK}
 echo "Done."
